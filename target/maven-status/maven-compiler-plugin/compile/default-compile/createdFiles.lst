@@ -1,6 +1,0 @@
-com\esprit\batch\config\BatchConfigMutex.class
-com\esprit\batch\utils\FormatHelper.class
-com\esprit\batch\repositories\CustomerRepository.class
-com\esprit\batch\BatchApplication.class
-com\esprit\batch\beans\Customer.class
-com\esprit\batch\controllers\MutexController.class
