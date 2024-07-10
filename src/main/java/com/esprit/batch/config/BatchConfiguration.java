@@ -31,115 +31,105 @@ import lombok.extern.log4j.Log4j2;
  * @author Mohamed Khalfallah
  * @company  
  */
-@Log4j2
-@Configuration
-@EnableAutoConfiguration
-public class BatchConfiguration {
+// @Log4j2
+// @Configuration
+// @EnableAutoConfiguration
+// public class BatchConfiguration {
 
-    @Value(value = "${inputFile}")
-    private Resource inputResource;
+//     @Value(value = "${inputFile}")
+//     private Resource inputResource;
 
-    // @Bean
-    // FlatFileItemReader<Customer> reader() {
-    //     return new FlatFileItemReaderBuilder<Customer>()
-    //             .name("customerItemReader")
-    //             .resource(inputResource)
-    //             .linesToSkip(1) // Skip header
-    //             .delimited()
-    //             .names("id", "firstName", "lastName", "email", "gender", "contactNo", "country", "dob")
-    //             .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
-    //                 setTargetType(Customer.class);
-    //             }})
-    //             .build();
-    // }
+//     @Bean
+//     FlatFileItemReader<Customer> reader() {
+//         BeanWrapperFieldSetMapper<Customer> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+//         fieldSetMapper.setTargetType(Customer.class);
 
-    @Bean
-    FlatFileItemReader<Customer> reader() {
-        BeanWrapperFieldSetMapper<Customer> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Customer.class);
-
-        return new FlatFileItemReaderBuilder<Customer>()
-                .name("customerItemReader")
-                .resource(inputResource)
-                .linesToSkip(1) 
-                .delimited()
-                .names("id", "firstName", "lastName", "email", "gender", "contactNo", "country", "dob", "address", "city", "state", "zipCode", "registrationDate", "lastLoginDate", "accountBalance")
-                .fieldSetMapper(fieldSetMapper)
-                .build();
-    }
+//         return new FlatFileItemReaderBuilder<Customer>()
+//                 .name("customerItemReader")
+//                 .resource(inputResource)
+//                 .linesToSkip(1) 
+//                 .delimited()
+//                 .names("id", "firstName", "lastName", "email", "gender", "contactNo", "country", "dob", "address", "city", "state", "zipCode", "registrationDate", "lastLoginDate", "accountBalance")
+//                 .fieldSetMapper(fieldSetMapper)
+//                 .build();
+//     }
 
 
-    @Bean
-    ItemProcessor<Customer, Customer> processor() {
-        return customer -> customer; // Pass-through processor
-    }
+//     @Bean
+//     ItemProcessor<Customer, Customer> processor() {
+//         return customer -> customer; // Pass-through processor
+//     }
 
-    @Bean
-    RepositoryItemWriter<Customer> writer(CustomerRepository customerRepository) {
-        RepositoryItemWriter<Customer> writer = new RepositoryItemWriter<>();
-        writer.setRepository(customerRepository);
-        writer.setMethodName("save");
-        return writer;
-    }
-
-    // @Bean
-    // Job importCustomerJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-    //                              ItemReader<Customer> reader, ItemProcessor<Customer, Customer> processor,
-    //                              ItemWriter<Customer> writer) {
-    //     StepBuilder stepBuilder = new StepBuilder("step1", jobRepository);
-    //     Step step = stepBuilder.<Customer, Customer>chunk(10, transactionManager)
-    //             .reader(reader)
-    //             .processor(processor)
-    //             .writer(writer)
-    //             .build();
-
-    //     JobBuilder jobBuilder = new JobBuilder("importCustomerJob", jobRepository);
-    //     return jobBuilder
-    //             .incrementer(new RunIdIncrementer())
-    //             .start(step)
-    //             .build();
-    // }
+//     @Bean
+//     RepositoryItemWriter<Customer> writer(CustomerRepository customerRepository) {
+//         RepositoryItemWriter<Customer> writer = new RepositoryItemWriter<>();
+//         writer.setRepository(customerRepository);
+//         writer.setMethodName("save");
+//         return writer;
+//     }
 
 
-    @Bean
-    TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor() {
-            @Override
-            public void execute(Runnable task) {
-                super.execute(() -> {
-                    try {
-                        log.info("Starting Task in thread: {}", Thread.currentThread().getName());
-                        task.run();
-                    } finally {
-                        log.info("Task Finished in thread: {}", Thread.currentThread().getName());
-                    }
-                });
-            }
-        };
-        taskExecutor.setCorePoolSize(10); // Set the number of threads
-        taskExecutor.setMaxPoolSize(20); // Set the maximum number of threads
-        taskExecutor.setQueueCapacity(25); // Set the queue capacity
-        taskExecutor.afterPropertiesSet();
-        return taskExecutor;
-    }
+
+//     @Bean
+//     TaskExecutor taskExecutor() {
+//         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor() {
+//             @Override
+//             public void execute(Runnable task) {
+//                 super.execute(() -> {
+//                     try {
+//                         log.info("Starting Task in thread: {}", Thread.currentThread().getName());
+//                         task.run();
+//                     } finally {
+//                         log.info("Task Finished in thread: {}", Thread.currentThread().getName());
+//                     }
+//                 });
+//             }
+//         };
+//         taskExecutor.setCorePoolSize(10); // Set the number of threads
+//         taskExecutor.setMaxPoolSize(20); // Set the maximum number of threads
+//         taskExecutor.setQueueCapacity(25); // Set the queue capacity
+//         taskExecutor.afterPropertiesSet();
+//         return taskExecutor;
+//     }
 
 
-    @Bean
-    Job importCustomerJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                                ItemReader<Customer> reader, ItemProcessor<Customer, Customer> processor,
-                                ItemWriter<Customer> writer, TaskExecutor taskExecutor) {
-        StepBuilder stepBuilder = new StepBuilder("step1", jobRepository);
-        Step step = stepBuilder.<Customer, Customer>chunk(10, transactionManager)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .taskExecutor(taskExecutor) // Use the TaskExecutor
-                .build();
+//     @Bean
+//     Job importCustomerJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//                                 ItemReader<Customer> reader, ItemProcessor<Customer, Customer> processor,
+//                                 ItemWriter<Customer> writer, TaskExecutor taskExecutor) {
+//         StepBuilder stepBuilder = new StepBuilder("step1", jobRepository);
+//         Step step = stepBuilder.<Customer, Customer>chunk(10, transactionManager)
+//                 .reader(reader)
+//                 .processor(processor)
+//                 .writer(writer)
+//                 .taskExecutor(taskExecutor) // Use the TaskExecutor
+//                 .build();
 
-        JobBuilder jobBuilder = new JobBuilder("importCustomerJob", jobRepository);
-        return jobBuilder
-                .incrementer(new RunIdIncrementer())
-                .start(step)
-                .build();
-    }
-}
+//         JobBuilder jobBuilder = new JobBuilder("importCustomerJob", jobRepository);
+//         return jobBuilder
+//                 .incrementer(new RunIdIncrementer())
+//                 .start(step)
+//                 .build();
+//     }
+
+
+
+//         // @Bean
+//     // Job importCustomerJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//     //                              ItemReader<Customer> reader, ItemProcessor<Customer, Customer> processor,
+//     //                              ItemWriter<Customer> writer) {
+//     //     StepBuilder stepBuilder = new StepBuilder("step1", jobRepository);
+//     //     Step step = stepBuilder.<Customer, Customer>chunk(10, transactionManager)
+//     //             .reader(reader)
+//     //             .processor(processor)
+//     //             .writer(writer)
+//     //             .build();
+
+//     //     JobBuilder jobBuilder = new JobBuilder("importCustomerJob", jobRepository);
+//     //     return jobBuilder
+//     //             .incrementer(new RunIdIncrementer())
+//     //             .start(step)
+//     //             .build();
+//     // }
+
+// }

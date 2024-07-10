@@ -18,51 +18,51 @@ import lombok.extern.log4j.Log4j2;
  * @author Ibtissem Belkhir
  * @author Mohamed Khalfallah
  * @company  
- */
-@Log4j2
-@RestController
-@RequestMapping("/customers")
-public class CustomerController {
+//  */
+// @Log4j2
+// @RestController
+// @RequestMapping("/customers")
+// public class CustomerController {
 
-    private final JobLauncher jobLauncher;
+//     private final JobLauncher jobLauncher;
 
-    private final Job importCustomerJob;
+//     private final Job importCustomerJob;
 
-    public CustomerController(JobLauncher jobLauncher, Job importCustomerJob){
-        this.jobLauncher = jobLauncher;
-        this.importCustomerJob = importCustomerJob;
-    }
-
-
-    @PostMapping("/importCustomers")
-    public ResponseEntity<String> importCsvToDBJob() {
-        JobParameters jobParameters = new JobParametersBuilder()
-            .addLong("startAt", System.currentTimeMillis())
-            .toJobParameters();
-
-        try {
-            long start = System.currentTimeMillis();
-            log.info("Batch Processing STARTED...");
-            jobLauncher.run(importCustomerJob, jobParameters);
-            long end = System.currentTimeMillis() - start;
-            log.info("Batch Processing ENDED IN ==> {}", formatDuration(end));
-            return ResponseEntity.ok("Customers imported successfully IN ==> " + formatDuration(end));
-        } catch (Exception e) {
-            log.info(e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import customers");
-        }
-    }
+//     public CustomerController(JobLauncher jobLauncher, Job importCustomerJob){
+//         this.jobLauncher = jobLauncher;
+//         this.importCustomerJob = importCustomerJob;
+//     }
 
 
-    public static String formatDuration(long millis) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-        millis -= TimeUnit.MINUTES.toMillis(minutes);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-        millis -= TimeUnit.SECONDS.toMillis(seconds);
+//     @PostMapping("/importCustomers")
+//     public ResponseEntity<String> importCsvToDBJob() {
+//         JobParameters jobParameters = new JobParametersBuilder()
+//             .addLong("startAt", System.currentTimeMillis())
+//             .toJobParameters();
 
-        return String.format("%dm %ds %dms", minutes, seconds, millis);
-    }
+//         try {
+//             long start = System.currentTimeMillis();
+//             log.info("Batch Processing STARTED...");
+//             jobLauncher.run(importCustomerJob, jobParameters);
+//             long end = System.currentTimeMillis() - start;
+//             log.info("Batch Processing ENDED IN ==> {}", formatDuration(end));
+//             return ResponseEntity.ok("Customers imported successfully IN ==> " + formatDuration(end));
+//         } catch (Exception e) {
+//             log.info(e.getMessage());
+//             e.printStackTrace();
+//             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import customers");
+//         }
+//     }
 
 
-}
+//     public static String formatDuration(long millis) {
+//         long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+//         millis -= TimeUnit.MINUTES.toMillis(minutes);
+//         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+//         millis -= TimeUnit.SECONDS.toMillis(seconds);
+
+//         return String.format("%dm %ds %dms", minutes, seconds, millis);
+//     }
+
+
+// }
